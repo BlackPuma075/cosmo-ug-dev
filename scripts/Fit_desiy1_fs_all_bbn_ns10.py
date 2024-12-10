@@ -6,7 +6,7 @@
 
 import numpy as np
 import matplotlib.pyplot as plt
-from desilike.theories.galaxy_clustering import REPTVelocileptorsTracerPowerSpectrumMultipoles, DirectPowerSpectrumTemplate
+from desilike.theories.galaxy_clustering import FOLPSAXTracerPowerSpectrumMultipoles, DirectPowerSpectrumTemplate
 from desilike.observables.galaxy_clustering import TracerPowerSpectrumMultipolesObservable 
 from desilike.observables import ObservableCovariance
 from desilike.emulators import EmulatedCalculator, Emulator, TaylorEmulatorEngine
@@ -83,12 +83,12 @@ fiducial = DESI() #fiducial cosmology
 
 #Define tracer types and their corresponding redshifts
 tracer_redshifts = {
-    'LRG1_NGC': 0.510, 'LRG1_SGC': 0.510,
-    'LRG2_NGC': 0.706, 'LRG2_SGC': 0.706,
-    'LRG3_NGC': 0.930, 'LRG3_SGC': 0.930,
-    'QSO_NGC': 1.491, 'QSO_SGC': 1.491,
-    'ELG_NGC': 1.317, 'ELG_SGC': 1.317,
-    'BGS_NGC': 0.295, 'BGS_SGC': 0.295
+    'LRG1': 0.510, 'LRG1': 0.510,
+    'LRG2': 0.706, 'LRG2': 0.706,
+    'LRG3': 0.930, 'LRG3': 0.930,
+    'QSO': 1.491, 'QSO': 1.491,
+    'ELG': 1.317, 'ELG': 1.317,
+    'BGS': 0.295, 'BGS': 0.295
 }
 
 #Initialize an empty list to store the theory objects
@@ -105,7 +105,7 @@ for tracer in tracers:
     #Create the template and theory objects
     template = DirectPowerSpectrumTemplate(fiducial = fiducial, z=z) #cosmology and fiducial cosmology defined above
     
-    theory = REPTVelocileptorsTracerPowerSpectrumMultipoles(template=template, prior_basis = prior_basis) #Add the prior_basis='physical' argument to use physically motivated priors
+    theory = FOLPSAXTracerPowerSpectrumMultipoles(template=template, prior_basis = prior_basis) #Add the prior_basis='physical' argument to use physically motivated priors
 
     #Update cosmo priors
     for param in ['n_s', 'h','omega_cdm', 'omega_b', 'logA', 'tau_reio']:
@@ -225,7 +225,7 @@ from desilike.samplers import EmceeSampler, MCMCSampler
 
 if sampler == 'cobaya':
     sampler = MCMCSampler(likelihood ,save_fn = chain_name)
-    sampler.run(check={'max_eigen_gr': 0.3})
+    sampler.run(check={'max_eigen_gr': 0.03})
     
 else:
     sampler = EmceeSampler(likelihood ,save_fn = chain_name)
