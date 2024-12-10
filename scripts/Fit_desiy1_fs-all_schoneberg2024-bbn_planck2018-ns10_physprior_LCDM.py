@@ -29,7 +29,7 @@ sampler = 'cobaya'
 
 # List of tracers
 tracers = ['BGS_NGC', 'LRG1_NGC', 'LRG2_NGC', 'LRG3_NGC', 'ELG_NGC', 'QSO_NGC']  # Add more tracers as needed
-chain_name = f'Chains/desiy1_rept_fs-all_schoneberg2024-bbn_planck2018-ns10_physprior_LCDM_'f'kmax{str(k_max).replace(".", "p")}' #fn to save the chain from the sampler
+chain_name = f'Chains/ug_desiy1_rept_fs-all_schoneberg2024-bbn_planck2018-ns10_physprior_LCDM_'f'kmax{str(k_max).replace(".", "p")}' #fn to save the chain from the sampler
 
 # Define file paths for each tracer (in the same order as the tracers list above)
 tracer_params = {
@@ -97,7 +97,9 @@ for tracer in tracers:
         continue
 
     #Create the template and theory objects
-    template = DirectPowerSpectrumTemplate(fiducial = fiducial,cosmo = cosmo, z=z) #cosmology and fiducial cosmology defined above
+    template = DirectPowerSpectrumTemplate(fiducial = fiducial, z=z) #cosmology and fiducial cosmology defined above
+    
+    theory = REPTVelocileptorsTracerPowerSpectrumMultipoles(template=template, prior_basis = prior_basis) #Add the prior_basis='physical' argument to use physically motivated priors
 
     #Update cosmo priors
     for param in ['n_s', 'h','omega_cdm', 'omega_b', 'logA', 'tau_reio']:
@@ -116,8 +118,6 @@ for tracer in tracers:
         if param == 'logA':
             template.params[param].update(prior = {'dist':'uniform','limits': [2.0, 4.0]})
     
-    theory = REPTVelocileptorsTracerPowerSpectrumMultipoles(template=template, prior_basis = prior_basis) #Add the prior_basis='physical' argument to use physically motivated priors
-
     #Update bias and EFT priors
     #theory.params['bs'].update(fixed=True)
     if prior_basis == 'physical':
