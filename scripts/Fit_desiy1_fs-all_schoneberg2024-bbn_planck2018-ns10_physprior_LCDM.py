@@ -83,37 +83,9 @@ tracer_params = {
 cosmo = Cosmoprimo(engine='class')
 cosmo.init.params['H0'] = dict(derived=True)
 cosmo.init.params['Omega_m'] = dict(derived=True)
-cosmo.init.params['sigma8_m'] = dict(derived=True) 
-cosmo.init.params['fR0'] = dict(derived=False)
+cosmo.init.params['sigma8_m'] = dict(derived=True)
 fiducial = DESI() #fiducial cosmology
 
-#Update cosmo priors
-for param in ['n_s', 'h','omega_cdm', 'omega_b', 'logA', 'tau_reio', 'fR0']:
-    cosmo.params[param].update(fixed = False)
-    if param == 'tau_reio':
-        cosmo.params[param].update(fixed = True)
-    if param == 'n_s':
-            #cosmo.params[param].update(fixed = True)
-            cosmo.params[param].update(prior={'dist': 'norm', 'loc': 0.9649, 'scale': 0.042})
-    if param == 'omega_b':
-            cosmo.params[param].update(prior={'dist': 'norm', 'loc': 0.02218, 'scale': 0.00055})
-    if param == 'h':
-            cosmo.params[param].update(prior = {'dist':'uniform','limits': [0.5,0.9]})
-    if param == 'omega_cdm':
-        cosmo.params[param].update(prior = {'dist':'uniform','limits': [0.05, 0.2]})
-    if param == 'logA':
-        cosmo.params[param].update(prior = {'dist':'uniform','limits': [2.0, 4.0]})
-    if param == 'fR0':
-        if model != 'HS':
-            print('model LCDM')
-            cosmo.params[param].update(fixed=True, value=0.0)
-        else:
-            print('model HS')
-            cosmo.params[param].update(
-            prior={'dist': 'uniform', 'limits': [0, 9e-5]},
-            fixed=False,
-            ref={'limits': [0, 9e-5]}
-            )
 
 #Define tracer types and their corresponding redshifts
 tracer_redshifts = {
@@ -138,6 +110,24 @@ for tracer in tracers:
 
     #Create the template and theory objects
     template = DirectPowerSpectrumTemplate(fiducial = fiducial,cosmo = cosmo, z=z) #cosmology and fiducial cosmology defined above
+
+    #Update cosmo priors
+    for param in ['n_s', 'h','omega_cdm', 'omega_b', 'logA', 'tau_reio']:
+        template.params[param].update(fixed = False)
+        if param == 'tau_reio':
+            template.params[param].update(fixed = True)
+        if param == 'n_s':
+            #cosmo.params[param].update(fixed = True)
+            template.params[param].update(prior={'dist': 'norm', 'loc': 0.9649, 'scale': 0.042})
+        if param == 'omega_b':
+            template.params[param].update(prior={'dist': 'norm', 'loc': 0.02218, 'scale': 0.00055})
+        if param == 'h':
+            template.params[param].update(prior = {'dist':'uniform','limits': [0.5,0.9]})
+        if param == 'omega_cdm':
+            template.params[param].update(prior = {'dist':'uniform','limits': [0.05, 0.2]})
+        if param == 'logA':
+            template.params[param].update(prior = {'dist':'uniform','limits': [2.0, 4.0]})
+    
     theory = REPTVelocileptorsTracerPowerSpectrumMultipoles(template=template, prior_basis = prior_basis) #Add the prior_basis='physical' argument to use physically motivated priors
 
     #Update bias and EFT priors
@@ -237,11 +227,11 @@ from desilike.samplers import EmceeSampler, MCMCSampler
 
 if sampler == 'cobaya':
     sampler = MCMCSampler(likelihood ,save_fn = chain_name)
-    sampler.run(check={'max_eigen_gr': 0.03})
+    sampler.run(check={'max_eigen_gr': 0.3})
     
 else:
     sampler = EmceeSampler(likelihood ,save_fn = chain_name)
-    sampler.run(check={'max_eigen_gr': 0.03})
+    sampler.run(check={'max_eigen_gr': 0.3})
     
 
 
