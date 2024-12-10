@@ -1,15 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[ ]:
-
-
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[1]:
-
-
 import numpy as np
 import matplotlib.pyplot as plt
 from desilike.theories.galaxy_clustering import REPTVelocileptorsTracerPowerSpectrumMultipoles, DirectPowerSpectrumTemplate
@@ -232,29 +220,3 @@ if sampler == 'cobaya':
 else:
     sampler = EmceeSampler(likelihood ,save_fn = chain_name)
     sampler.run(check={'max_eigen_gr': 0.3})
-    
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
-
-# In[ ]:
-
-
-
-
